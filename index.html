@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<script type="text/javascript" src="/resources/js/jquery-1.11.2.min.js"></script>
+<script type="text/javascript"
+	src="/resources/js/jquery-ui-1.11.4.custom/jquery-ui.js"></script>
+
+<title>일정섹</title>
+
+<style>
+
+
+html {
+	height: 100%;
+}
+
+body {
+	height: 100%;
+	margin: 0;
+	position: relative;
+}
+
+table {
+	width: 100%;
+	border: 1px solid #444444;
+	background-color: white;
+}
+
+th, td {
+	border: 1px solid #444444;
+}
+
+#calendar {
+	height: 99%;
+	box-sizing: border-box;
+	padding: 0.5%;
+}
+
+.calendar__day {
+	display: inline-block;
+	vertical-align: bottom;
+	width: calc(97%/ 7);
+	height: calc(98%/ 5);
+	box-sizing: border-box;
+	border-radius: 5px;
+	padding: 20px;
+}
+
+.horizontalGutter {
+	margin-right: 0.5%;
+}
+
+.verticalGutter {
+	margin-top: 0.5%;
+}
+
+.btn {
+	cursor: pointer;
+}
+</style>
+<script type="text/javascript">
+Date.prototype.getWeek = function (dowOffset) {
+	  /*getWeek() was developed by Nick Baicoianu at MeanFreePath: http://www.meanfreepath.com */
+
+	  dowOffset = typeof(dowOffset) == 'number' ? dowOffset : 0; //default dowOffset to zero
+	  var newYear = new Date(this.getFullYear(),0,1);
+	  var day = newYear.getDay() - dowOffset; //the day of week the year begins on
+	  day = (day >= 0 ? day : day + 7);
+	  var daynum = Math.floor((this.getTime() - newYear.getTime() -
+	    (this.getTimezoneOffset()-newYear.getTimezoneOffset())*60000)/86400000) + 1;
+	  var weeknum;
+	  //if the year starts before the middle of a week
+	  if(day < 4) {
+	    weeknum = Math.floor((daynum+day-1)/7) + 1;
+	    if(weeknum > 52) {
+	      let nYear = new Date(this.getFullYear() + 1,0,1);
+	      let nday = nYear.getDay() - dowOffset;
+	      nday = nday >= 0 ? nday : nday + 7;
+	      /*if the next year starts before the middle of
+	        the week, it is week #1 of that year*/
+	      weeknum = nday < 4 ? 1 : 53;
+	    }
+	  }
+	  else {
+	    weeknum = Math.floor((daynum+day-1)/7);
+	  }
+	  return weeknum;
+	};
+
+
+var basicDate = "20202020;"
+var sun = 0;
+var mon = 1;
+var tue = 2;
+var wed = 3;
+var thu = 4;
+var fri = 5;
+var sat = 6;
+
+
+var colorDate = {
+	today : 'red',
+	nightwork : 'grey',
+	daywork : 'yellow',
+	notmonth : 'grey',
+	normal : 'white',
+	event : 'pink'
+}
+
+var chkColor = function(year, month, date) {
+	//기준날짜 2020/11/23 야간시작
+	var date1 = new Date(2020, 9, 25);
+	var date2 = new Date(year, month, date);
+		
+	var elapsedMSec = date2.getTime() - date1.getTime(); // 172800000
+	var elapsedDay = elapsedMSec / 1000 / 60 / 60 / 24;
+	var elapsedWeek = elapsedDay + (7-elapsedDay % 7);
+	var modVal = elapsedWeek % 4;
+	var today = new Date();
+	
+	if ((date2.getMonth() == today.getMonth()) &&	(date2.getFullYear() == today.getFullYear())&&	(date2.getDate() == today.getDate())){
+		return colorDate['today']
+	}	
+	if (date2.getDay() == 0){
+		return colorDate['normal']	
+	}
+	if (date2.getDay() == 6 && modVal==3){
+		return colorDate['daywork']
+	}else if(date2.getDay() == 6){
+		return colorDate['normal']
+	}
+	
+	
+	
+	switch (modVal) {
+	case 0:
+		return colorDate['nightwork']
+		break;
+	case 1:
+		return colorDate['nightwork']
+		break;
+	case 2:
+		return colorDate['daywork']
+		break;
+	case 3:
+		return colorDate['daywork']
+		break;
+	
+
+	default:
+		break;
+	}
+	
+	
+
+}
+
+var makeData = function(year, month) {
+	var html = ''
+	var maxDay = 32 - new Date(year, month, 32).getDate();
+
+	//7*5 데이터 만들기
+	console.log(year, month)
+	var firstDate = new Date(year, month, 1);
+	var firstDayOfWeek = firstDate.getDay();
+
+	var dateList = [];
+
+	//지난달
+	for (var i = 0; i < firstDayOfWeek; i++) {
+		var tempDate = new Date(year, month, 1)
+		var yesterday = new Date(tempDate.setDate(tempDate.getDate()
+				- (i + 1)));
+				
+		dateList.push({
+			type : 'grey',
+			date : yesterday.getDate()
+		})
+
+	}
+	dateList = dateList.reverse();
+	console.log('1차 길이', dateList.length)
+	//이번달
+	for (var i = 1; i < maxDay + 1; i++) {
+
+		chkColor(year, month, i)
+
+		
+		dateList.push({
+			type : chkColor(year, month, i),
+			date : i
+		})
+	}
+	console.log('2차 길이', dateList.length)
+	
+	var listExtension = 35 - dateList.length
+
+	//다음달
+	for (var i = 0; i < listExtension; i++) {
+		var tempDate = new Date(year, month, maxDay)
+		var tomorrow = new Date(tempDate.setDate(tempDate.getDate()
+				+ (i + 1)));
+		dateList.push({
+			type : 'grey',
+			date : tomorrow.getDate()
+		})
+	}
+	console.log('3차 길이', dateList.length)
+	console.log(dateList.length, dateList)
+	
+	
+	var resultList = [];
+	for (var i = 0; i < 5; i++) {
+		resultList.push(dateList.splice(0,7))
+	}
+	console.log(resultList)
+	
+	//반복문 표현할 주수
+	for (var w = 0; w < resultList.length; w++) {
+		html += '<tr>';
+		for (var i = 0; i < resultList[w].length; i++) {
+			html += '<td style="background-color:'+resultList[w][i].type+';">';
+			html += resultList[w][i].date
+			html += '</td>';
+			console.log('<td style="background-color:'+resultList[w][i].type+';">'+resultList[w][i].date+'</td>')
+		}
+		html += '</tr>';
+	}
+
+	$('#dataBody').html('').html(html);
+	
+	$('#year').text(year)
+	$('#month').text(month + 1)
+}
+
+$(document).ready(function() {
+	//오늘 달과 년 찾기
+	var today = new Date();
+
+	makeData(today.getFullYear(), today.getMonth())
+	
+
+	$('#btn_left').click(function() {
+		//이전달 데이터 생성
+		var year = $('#year').text()
+		var month = $('#month').text() -1
+		var temp = new Date(year, month)
+		temp.setMonth(temp.getMonth() - 1)
+		
+		makeData(temp.getFullYear(), temp.getMonth())
+	})
+
+	$('#btn_right').click(function() {
+		//다음달 데이터 생성
+		var year = $('#year').text()
+		var month = $('#month').text() -1
+		var temp = new Date(year, month)
+		temp.setMonth(temp.getMonth() + 1)
+		
+		makeData(temp.getFullYear(), temp.getMonth())
+	})
+
+})
+</script>
+</head>
+
+<body>
+	
+	<div style="height: 10%; width: 100%; display: flex;">
+		<span id="btn_left" class="btn"style="flex: 1; text-align: center; font-size: 25px;">전달섹</span> 
+		<span style="flex: 1; text-align: center; font-size: 50px; display: contents;">
+			<p style='color:hotpink'>♡승&nbsp;&nbsp;</p>
+			<p id="year">2020</p>
+			<p>.</p>
+			<p id="month">11</p>
+			<p style='color:hotpink'>&nbsp;&nbsp;섹♡</p>
+		</span> <span id="btn_right" class="btn" style="flex: 1; text-align: center; font-size: 25px;">담달섹</span>
+	</div>
+	<div style="width: 100%; display: flex;">
+		<table
+			style="width: 80%; left: 10%; position: absolute; text-align: center; margin-top: 4%;font-size:25px;">
+			<thead>
+				<tr>
+					<td>일</td>
+					<td>월</td>
+					<td>화</td>
+					<td>수</td>
+					<td>목</td>
+					<td>금</td>
+					<td>토</td>
+				</tr>
+			</thead>
+			<tbody id='dataBody'>
+			</tbody>
+		</table>
+	</div>
+	<div style="width: 100%;top: 500px;position: absolute;left: 50px;">
+		<p><font style='color:hotpink'>승섹</font>의 근무주기를 표시합니다. 2020.10 이전은 반영되지 않습니다.</p>
+		<p><font style='color:red'>빨강</font>은 오늘을 의미합니다.</p>
+		<p><font style='color:grey'>회색</font>은 야간조 이거나 다른 달을 의미합니다. 달력을 이동해 주세요.</p>
+		<p><font style='color:yellow'>노랑</font>은 주간조 입니다. 토요일의 근무 여부도 반영됩니다.</p>
+	</div>
+	
+</body>
+
+</html>
