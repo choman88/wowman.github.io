@@ -111,7 +111,7 @@ var colorDate = {
 
 var chkColor = function(year, month, date) {
 	//기준날짜 2020/11/23 야간시작
-	var date1 = new Date(2020, 9, 25);
+	var date1 = new Date(2020, 9, 11);
 	var date2 = new Date(year, month, date);
 		
 	var elapsedMSec = date2.getTime() - date1.getTime(); // 172800000
@@ -120,7 +120,7 @@ var chkColor = function(year, month, date) {
 	var modVal = elapsedWeek % 4;
 	var today = new Date();
 	
-	if ((date2.getMonth() == today.getMonth()) &&	(date2.getFullYear() == today.getFullYear())&&	(date2.getDate() == today.getDate())){
+	if ((date2.getMonth() == today.getMonth()) &&	(date2.getFullYear() == today.getFullYear()) &&	(date2.getDate() == today.getDate())){
 		return colorDate['today']
 	}	
 	if (date2.getDay() == 0){
@@ -297,9 +297,9 @@ $(document).ready(function() {
 		</table>
 	</div>
 	<div style="width: 100%;top: 500px;position: absolute;left: 10px;">
-		<p><font style='color:hotpink'>승섹</font>의 근무주기를 표시합니다. 2020.10 이전은 반영되지 않습니다.</p>
+		<p><font style='color:hotpink'>승섹</font>의 근무주기를 표시합니다. <br>2020.10 이전은 반영되지 않습니다.</p>
 		<p><font style='color:red'>빨강</font>은 오늘을 의미합니다.</p>
-		<p><font style='color:grey'>회색</font>은 야간조 이거나 다른 달을 의미합니다. 달력을 이동해 주세요.</p>
+		<p><font style='color:grey'>회색</font>은 야간조 이거나 다른 달을 의미합니다. <br>달력을 이동해 주세요.</p>
 		<p><font style='color:yellow'>노랑</font>은 주간조 입니다. 토요일의 근무 여부도 반영됩니다.</p>
 	</div>
 	
