@@ -102,9 +102,9 @@ var sat = 6;
 
 var colorDate = {
 	today : 'red',
-	nightwork : 'grey',
+	nightwork : 'lightgrey',
 	daywork : 'yellow',
-	notmonth : 'lightgrey',
+	notmonth : 'grey',
 	normal : 'white',
 	event : 'pink'
 }
@@ -175,7 +175,7 @@ var makeData = function(year, month) {
 				- (i + 1)));
 				
 		dateList.push({
-			type : 'grey',
+			type : colorDate['notmonth'],
 			date : yesterday.getDate()
 		})
 
@@ -203,7 +203,7 @@ var makeData = function(year, month) {
 		var tomorrow = new Date(tempDate.setDate(tempDate.getDate()
 				+ (i + 1)));
 		dateList.push({
-			type : 'grey',
+			type : colorDate['notmonth'],
 			date : tomorrow.getDate()
 		})
 	}
