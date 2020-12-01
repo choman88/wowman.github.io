@@ -182,20 +182,25 @@ var chkColor = function(year, month, date) {
 	}
 	
 	var result_date = chkBlackDate(year, month, date)
+	
 	if(result_date == 'x'){
 		result = colorDate['nightwork']
 	}
 
 	var result_data = {
 		type:result,
-		date:result_date
+		date:result_date,
+		onClick:'dateClick('+year+','+month+','+date+')'
 	}
+	
+	console.log(result_data)
 	
 	return result_data;
 
 }
 
 var dateClick = function(year, month, date){
+	console.log('click', year, month, date)
 	if(date < 10){
 		date = '0'+date;
 	}
@@ -203,9 +208,12 @@ var dateClick = function(year, month, date){
 	
 	var chkDateLunar = moment().year(year).month(month).date(date).lunar().format('MMDD')
 	
+	console.log('입력날짜', chkDate, chkDateLunar)
 	if(blackDateLunar.hasOwnProperty(chkDateLunar)){
+		console.log('음력', blackDateLunar[chkDateLunar])
 		alert(blackDateLunar[chkDateLunar]);
 	}else if(blackDateSolar.hasOwnProperty(chkDate)){
+		console.log('양력', blackDateSolar[chkDate])
 		alert(blackDateSolar[chkDate]);
 	}else{
 		
@@ -219,7 +227,7 @@ var makeData = function(year, month) {
 	var maxDay = 32 - new Date(year, month, 32).getDate();
 
 	//7*5 데이터 만들기
-	console.log(year, month)
+	
 	var firstDate = new Date(year, month, 1);
 	var firstDayOfWeek = firstDate.getDay();
 
@@ -250,6 +258,7 @@ var makeData = function(year, month) {
 		
 	}
 	console.log('2차 길이', dateList.length)
+	console.log(dateList)
 	
 	var listExtension = 35 - dateList.length
 
@@ -262,25 +271,32 @@ var makeData = function(year, month) {
 			type : colorDate['notmonth'],
 			date : tomorrow.getDate()
 		})
+		
 	}
 	console.log('3차 길이', dateList.length)
-	console.log(dateList.length, dateList)
+	console.log(dateList)
 	
 	
 	var resultList = [];
 	for (var i = 0; i < 5; i++) {
 		resultList.push(dateList.splice(0,7))
 	}
-	console.log(resultList)
+	
 	
 	//반복문 표현할 주수
 	for (var w = 0; w < resultList.length; w++) {
 		html += '<tr>';
 		for (var i = 0; i < resultList[w].length; i++) {
-			html += '<td style="background-color:'+resultList[w][i].type+';"';
+			console.log()
+			if(resultList[w][i].onClick){
+				html += '<td style="background-color:'+resultList[w][i].type+';" onClick="'+resultList[w][i].onClick+'">';
+			}else{
+				html += '<td style="background-color:'+resultList[w][i].type+';">';	
+			}
+			
 			html += resultList[w][i].date
 			html += '</td>';
-			console.log('<td style="background-color:'+resultList[w][i].type+';">'+resultList[w][i].date+'</td>')
+			
 		}
 		html += '</tr>';
 	}
