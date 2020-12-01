@@ -126,7 +126,6 @@ var chkBlackDate = function(year, month, date){
 		return 'x';
 	}
 	return date;
-	
 
 }
 
@@ -192,6 +191,26 @@ var chkColor = function(year, month, date) {
 
 }
 
+var dateClick = function(year, month, date){
+	if(date < 10){
+		date = '0'+date;
+	}
+	var chkDate = (month+1)+''+date;
+	
+	var chkDateLunar = moment().year(year).month(month).date(date).lunar().format('MMDD')
+	
+	var msg = ''
+	if(blackDateLunar.hasOwnProperty(chkDateLunar)){
+		alert(blackDateLunar[chkDateLunar]);
+	}else if(blackDateSolar.hasOwnProperty(chkDate)){
+		alert(blackDateSolar[chkDate]);
+	}else{
+		
+	}
+	 
+}
+
+
 var makeData = function(year, month) {
 	var html = ''
 	var maxDay = 32 - new Date(year, month, 32).getDate();
@@ -255,7 +274,7 @@ var makeData = function(year, month) {
 	for (var w = 0; w < resultList.length; w++) {
 		html += '<tr>';
 		for (var i = 0; i < resultList[w].length; i++) {
-			html += '<td style="background-color:'+resultList[w][i].type+';">';
+			html += '<td style="background-color:'+resultList[w][i].type+';"';
 			html += resultList[w][i].date
 			html += '</td>';
 			console.log('<td style="background-color:'+resultList[w][i].type+';">'+resultList[w][i].date+'</td>')
