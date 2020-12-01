@@ -122,10 +122,14 @@ var chkBlackDate = function(year, month, date){
 	
 	var chkDateLunar = moment().year(year).month(month).date(date).lunar().format('MMDD')
 	
-	if(blackDateLunar.hasOwnProperty(chkDateLunar)||blackDateSolar.hasOwnProperty(chkDate)){
+	if(blackDateLunar.hasOwnProperty(chkDateLunar)){
 		return 'x';
+	}else if(blackDateSolar.hasOwnProperty(chkDate)){
+		return 'x';
+	}else{
+		return date;
 	}
-	return date;
+	
 
 }
 
@@ -199,7 +203,6 @@ var dateClick = function(year, month, date){
 	
 	var chkDateLunar = moment().year(year).month(month).date(date).lunar().format('MMDD')
 	
-	var msg = ''
 	if(blackDateLunar.hasOwnProperty(chkDateLunar)){
 		alert(blackDateLunar[chkDateLunar]);
 	}else if(blackDateSolar.hasOwnProperty(chkDate)){
