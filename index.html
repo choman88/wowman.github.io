@@ -1,10 +1,12 @@
-<!DOCTYPE html>
+<!DOCTYPE tml>
 <html>
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+<script src="https://unpkg.com/moment-lunar@0.0.4/moment-lunar.min.js"></script>
 
 
 <title>일정섹</title>
@@ -61,33 +63,7 @@ th, td {
 }
 </style>
 <script type="text/javascript">
-Date.prototype.getWeek = function (dowOffset) {
-	  /*getWeek() was developed by Nick Baicoianu at MeanFreePath: http://www.meanfreepath.com */
 
-	  dowOffset = typeof(dowOffset) == 'number' ? dowOffset : 0; //default dowOffset to zero
-	  var newYear = new Date(this.getFullYear(),0,1);
-	  var day = newYear.getDay() - dowOffset; //the day of week the year begins on
-	  day = (day >= 0 ? day : day + 7);
-	  var daynum = Math.floor((this.getTime() - newYear.getTime() -
-	    (this.getTimezoneOffset()-newYear.getTimezoneOffset())*60000)/86400000) + 1;
-	  var weeknum;
-	  //if the year starts before the middle of a week
-	  if(day < 4) {
-	    weeknum = Math.floor((daynum+day-1)/7) + 1;
-	    if(weeknum > 52) {
-	      let nYear = new Date(this.getFullYear() + 1,0,1);
-	      let nday = nYear.getDay() - dowOffset;
-	      nday = nday >= 0 ? nday : nday + 7;
-	      /*if the next year starts before the middle of
-	        the week, it is week #1 of that year*/
-	      weeknum = nday < 4 ? 1 : 53;
-	    }
-	  }
-	  else {
-	    weeknum = Math.floor((daynum+day-1)/7);
-	  }
-	  return weeknum;
-	};
 
 
 var basicDate = "20202020;"
@@ -109,6 +85,51 @@ var colorDate = {
 	event : 'pink'
 }
 
+var blackDateSolar = {
+	'0926':'고은생일',
+	'1025':'욘생일',       
+	'0803':'욘동생생일',       
+	'1202':'욘첫데이트',
+	'0224':'욘결혼기념일',
+	'0604':'욘처남',
+	'1212':'욘장인생신',
+	'0918':'욘장모생신',
+	'0206':'섹동생생일',       
+	'1006':'섹생일',       
+	'1118':'섹여친생일',       
+	'0130':'섹첫데이트',       
+	'0810':'콩생일',       
+	'0409':'태하생일',       
+	'0825':'콩결혼기념일',
+	'0222':'콩첫데이트'
+}
+
+var blackDateLunar = {
+	'0130':'욘아버지생신',
+	'0811':'욘어머니생신',
+	'0824':'콩아버지생신',
+	'0629':'콩어머니생신',
+	'0214':'콩장인생신',
+	'0210':'콩장모생신',
+	'0918':'섹어머니기일',
+	'0119':'섹아버지생신'
+}
+var chkBlackDate = function(year, month, date){
+	if(date < 10){
+		date = '0'+date;
+	}
+	var chkDate = (month+1)+''+date;
+	
+	var chkDateLunar = moment().year(year).month(month).date(date).lunar().format('MMDD')
+	
+	if(blackDateLunar.hasOwnProperty(chkDateLunar)||blackDateSolar.hasOwnProperty(chkDate)){
+		return 'x';
+	}
+	return date;
+	
+
+}
+
 var chkColor = function(year, month, date) {
 	//기준날짜 2020/11/23 야간시작
 	var date1 = new Date(2020, 9, 11);
@@ -119,33 +140,25 @@ var chkColor = function(year, month, date) {
 	var elapsedWeek = elapsedDay + (7-elapsedDay % 7);
 	var modVal = elapsedWeek % 4;
 	var today = new Date();
+
+	var result = colorDate['normal'];
 	
-	if ((date2.getMonth() == today.getMonth()) &&	(date2.getFullYear() == today.getFullYear()) &&	(date2.getDate() == today.getDate())){
-		return colorDate['today']
-	}	
-	if (date2.getDay() == 0){
-		return colorDate['normal']	
-	}
-	if (date2.getDay() == 6 && modVal==3){
-		return colorDate['daywork']
-	}else if(date2.getDay() == 6){
-		return colorDate['normal']
-	}
+	
 	
 	
 	
 	switch (modVal) {
 	case 0:
-		return colorDate['nightwork']
+		result = colorDate['nightwork']
 		break;
 	case 1:
-		return colorDate['nightwork']
+		result = colorDate['nightwork']
 		break;
 	case 2:
-		return colorDate['daywork']
+		result = colorDate['daywork']
 		break;
 	case 3:
-		return colorDate['daywork']
+		result = colorDate['daywork']
 		break;
 	
 
@@ -153,7 +166,29 @@ var chkColor = function(year, month, date) {
 		break;
 	}
 	
+	if ((date2.getMonth() == today.getMonth()) &&	(date2.getFullYear() == today.getFullYear()) &&	(date2.getDate() == today.getDate())){
+		result = colorDate['today']
+	}	
+	if (date2.getDay() == 0){
+		result = colorDate['normal']	
+	}
+	if (date2.getDay() == 6 && modVal==3){
+		result = colorDate['daywork']
+	}else if(date2.getDay() == 6){
+		result = colorDate['normal']
+	}
 	
+	var result_date = chkBlackDate(year, month, date)
+	if(result_date == 'x'){
+		result = colorDate['nightwork']
+	}
+
+	var result_data = {
+		type:result,
+		date:result_date
+	}
+	
+	return result_data;
 
 }
 
@@ -184,14 +219,13 @@ var makeData = function(year, month) {
 	console.log('1차 길이', dateList.length)
 	//이번달
 	for (var i = 1; i < maxDay + 1; i++) {
-
-		chkColor(year, month, i)
-
 		
-		dateList.push({
+		/* dateList.push({
 			type : chkColor(year, month, i),
 			date : i
-		})
+		}) */
+		dateList.push(chkColor(year, month, i));
+		
 	}
 	console.log('2차 길이', dateList.length)
 	
@@ -296,7 +330,7 @@ $(document).ready(function() {
 			</tbody>
 		</table>
 	</div>
-	<div style="width: 100%;top: 500px;position: absolute;left: 10px;">
+	<div style="width: 100%;top: 500px;position: absolute;left: 10px;background-color:lightgrey;">
 		<p><font style='color:hotpink'>승섹</font>의 근무주기를 표시합니다. <br>2020.10 이전은 반영되지 않습니다.</p>
 		<p><font style='color:red'>빨강</font>은 오늘을 의미합니다.</p>
 		<p><font style='color:grey'>회색</font>은 야간조 이거나 다른 달을 의미합니다. <br>달력을 이동해 주세요.</p>
