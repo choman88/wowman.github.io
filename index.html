@@ -115,10 +115,15 @@ var blackDateLunar = {
 	'0119':'섹아버지생신'
 }
 var chkBlackDate = function(year, month, date){
+	month = month+1
+
+	if(month < 10){
+		month = '0'+month;
+	}
 	if(date < 10){
 		date = '0'+date;
 	}
-	var chkDate = (month+1)+''+date;
+	var chkDate = month+''+date;
 	
 	var chkDateLunar = moment().year(year).month(month).date(date).lunar().format('MMDD')
 	
@@ -201,10 +206,17 @@ var chkColor = function(year, month, date) {
 
 var dateClick = function(year, month, date){
 	console.log('click', year, month, date)
+
+	month = month+1
+
+	if(month < 10){
+		month = '0'+month;
+	}
+	
 	if(date < 10){
 		date = '0'+date;
 	}
-	var chkDate = (month+1)+''+date;
+	var chkDate = month+''+date;
 	
 	var chkDateLunar = moment().year(year).month(month).date(date).lunar().format('MMDD')
 	
