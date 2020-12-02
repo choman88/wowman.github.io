@@ -115,6 +115,8 @@ var blackDateLunar = {
 	'0119':'섹아버지생신'
 }
 var chkBlackDate = function(year, month, date){
+	var chkDateLunar = moment().year(year).month(month).date(date).lunar().format('MMDD')
+	
 	month = month+1
 
 	if(month < 10){
@@ -125,7 +127,7 @@ var chkBlackDate = function(year, month, date){
 	}
 	var chkDate = month+''+date;
 	
-	var chkDateLunar = moment().year(year).month(month).date(date).lunar().format('MMDD')
+	
 	
 	if(blackDateLunar.hasOwnProperty(chkDateLunar)){
 		return 'x';
@@ -205,8 +207,8 @@ var chkColor = function(year, month, date) {
 }
 
 var dateClick = function(year, month, date){
-	console.log('click', year, month, date)
-
+	
+	var chkDateLunar = moment().year(year).month(month).date(date).lunar().format('MMDD')
 	month = month+1
 
 	if(month < 10){
@@ -218,17 +220,28 @@ var dateClick = function(year, month, date){
 	}
 	var chkDate = month+''+date;
 	
-	var chkDateLunar = moment().year(year).month(month).date(date).lunar().format('MMDD')
+	var msg = '';
 	
 	console.log('입력날짜', chkDate, chkDateLunar)
 	if(blackDateLunar.hasOwnProperty(chkDateLunar)){
 		console.log('음력', blackDateLunar[chkDateLunar])
-		alert(blackDateLunar[chkDateLunar]);
+		//alert(blackDateLunar[chkDateLunar]);
+		msg += blackDateLunar[chkDateLunar]
 	}else if(blackDateSolar.hasOwnProperty(chkDate)){
 		console.log('양력', blackDateSolar[chkDate])
-		alert(blackDateSolar[chkDate]);
+		//alert(blackDateSolar[chkDate]);
+		
+		if(msg != ''){
+			msg += '<br>';
+		}
+		msg +=blackDateSolar[chkDate]
+		
 	}else{
 		
+	}
+	
+	if(msg != ''){
+		alert(msg)
 	}
 	 
 }
