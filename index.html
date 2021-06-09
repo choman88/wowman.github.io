@@ -199,9 +199,13 @@ var chkColor = function(year, month, date) {
 	if (date2.getDay() == 0){
 		result = colorDate['normal']	
 	}
-	if (date2.getDay() == 6 && modVal==3){
+	//승섹 토요일 근무가 사라지는 관계로 해당 로직 주석처리
+	/* if (date2.getDay() == 6 && modVal==3){
 		result = colorDate['daywork']
 	}else if(date2.getDay() == 6){
+		result = colorDate['normal']
+	} */
+	if(date2.getDay() == 6){
 		result = colorDate['normal']
 	}
 	
